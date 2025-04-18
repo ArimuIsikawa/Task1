@@ -88,16 +88,36 @@ namespace Task1
             return NewLine.ToString();
         }
 
+        public static bool IsLatinLowLetter(char ch)
+        {
+            return (ch >= 'a' && ch <= 'z');
+        }
+
+        public static bool CheckLine(string line)
+        {
+            // Проверяет наличие букв верхнего регистра и цифр
+            for (int i = 0; i < line.Length; ++i)
+            {
+                if (char.IsDigit(line[i]) || char.IsUpper(line[i]) || !IsLatinLowLetter(line[i]))
+                    return false;
+            }
+            return true;
+        }
+
         public static void Main()
         {
             //string line = Console.ReadLine();
+            const string line = "aaabbeeeeeeeeee";
 
-            const string line = "aaabbcccdde";
+            if (CheckLine(line))
+            {
+                string CompressedLine = Compress(line);
+                Console.WriteLine(CompressedLine);
 
-            string CompressedLine = Compress(line);
-            Console.WriteLine(CompressedLine);
-
-            Console.WriteLine(DeCompress(CompressedLine));
+                Console.WriteLine(DeCompress(CompressedLine));
+            }
+            else
+                Console.WriteLine("Входная строка имеет не верный формат");
             Console.ReadKey();
         }
     }
