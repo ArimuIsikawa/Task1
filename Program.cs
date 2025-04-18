@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace Task1
 {
@@ -9,7 +10,7 @@ namespace Task1
             if (line.Length <= 1)
                 return line;
 
-            string NewLine = "";
+            StringBuilder NewLine = new StringBuilder();
 
             int count = 1;
             char symbol = line[0];
@@ -19,18 +20,22 @@ namespace Task1
                     ++count;
                 else
                 {
-                    NewLine += symbol + count.ToString();
+                    NewLine.Append(symbol);
+                    NewLine.Append(count.ToString());
                     count = 1;
                     symbol = line[i];
                 }
             }
 
             if (count == 1)
-                NewLine += symbol;
+                NewLine.Append(symbol);
             else
-                NewLine += symbol + count.ToString();
+            {
+                NewLine.Append(symbol);
+                NewLine.Append(count.ToString());
+            }
 
-            return NewLine;
+            return NewLine.ToString();
         }
 
         public static string DeCompress(string line)
@@ -38,27 +43,49 @@ namespace Task1
             if (line.Length <= 1)
                 return line;
 
-            string NewLine = "";
+            StringBuilder NewLine = new StringBuilder();
 
+            bool setupNum = false;
+            char symbol = line[0];
             int i = 0;
+            string num = "";
+
             while (i < line.Length)
             {
-                //a3b2c3d2e
-                if ((i + 1 < line.Length) && char.IsDigit(line[i + 1]))
+                //a10e
+                if (!char.IsDigit(line[i]))
                 {
-                    int count = int.Parse(line[i + 1].ToString());
-                    for (int j = 0; j < count; ++j)
-                        NewLine += line[i];
-                    i += 2;
+                    if (setupNum == true)
+                    {
+                        setupNum = false;
+                        int max = int.Parse(num);
+                        for (int j = 0; j < max - 1; ++j)
+                            NewLine.Append(symbol);
+                        num = "";
+                    }
+                    else
+                    {
+                        symbol = line[i];
+                        NewLine.Append(symbol);
+                        ++i;
+                    }
                 }
                 else
                 {
-                    NewLine += line[i];
-                    i += 1;
+                    setupNum = true;
+                    num += line[i];
+                    ++i;
                 }
             }
 
-            return NewLine;
+            if ((i == line.Length) && (setupNum == true))
+            {
+                int max = int.Parse(num);
+                for (int j = 0; j < max - 1; ++j)
+                    NewLine.Append(symbol);
+            }
+
+            return NewLine.ToString();
         }
 
         public static void Main()
