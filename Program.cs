@@ -27,13 +27,9 @@ namespace Task1
                 }
             }
 
-            if (count == 1)
-                NewLine.Append(symbol);
-            else
-            {
-                NewLine.Append(symbol);
-                NewLine.Append(count.ToString());
-            }
+            NewLine.Append(symbol);
+            if (count > 1)
+                NewLine.Append(count);
 
             return NewLine.ToString();
         }
@@ -45,44 +41,30 @@ namespace Task1
 
             StringBuilder NewLine = new StringBuilder();
 
-            bool setupNum = false;
             char symbol = line[0];
             int i = 0;
-            string num = "";
 
             while (i < line.Length)
             {
-                //a10e
-                if (!char.IsDigit(line[i]))
+                char current = line[i];
+                if (char.IsLetter(current))
                 {
-                    if (setupNum == true)
-                    {
-                        setupNum = false;
-                        int max = int.Parse(num);
-                        for (int j = 0; j < max - 1; ++j)
-                            NewLine.Append(symbol);
-                        num = "";
-                    }
-                    else
-                    {
-                        symbol = line[i];
-                        NewLine.Append(symbol);
-                        ++i;
-                    }
+                    symbol = current;
+                    NewLine.Append(symbol);
+                    i++;
                 }
                 else
                 {
-                    setupNum = true;
-                    num += line[i];
-                    ++i;
+                    string numBuilder = "";
+                    while (i < line.Length && char.IsDigit(line[i]))
+                    {
+                        numBuilder += line[i];
+                        i++;
+                    }
+                    int count = int.Parse(numBuilder.ToString());
+                    for (int j = 1; j < count; j++)
+                        NewLine.Append(symbol);
                 }
-            }
-
-            if ((i == line.Length) && (setupNum == true))
-            {
-                int max = int.Parse(num);
-                for (int j = 0; j < max - 1; ++j)
-                    NewLine.Append(symbol);
             }
 
             return NewLine.ToString();
@@ -93,8 +75,11 @@ namespace Task1
             return (ch >= 'a' && ch <= 'z');
         }
 
-        public static bool CheckLine(string line)
+        public static bool IsValidInputLine(string line)
         {
+            if (string.IsNullOrEmpty(line))
+                return false;
+
             // Проверяет наличие букв верхнего регистра и цифр
             for (int i = 0; i < line.Length; ++i)
             {
@@ -109,7 +94,7 @@ namespace Task1
             //string line = Console.ReadLine();
             const string line = "aaabbeeeeeeeeee";
 
-            if (CheckLine(line))
+            if (IsValidInputLine(line))
             {
                 string CompressedLine = Compress(line);
                 Console.WriteLine(CompressedLine);
